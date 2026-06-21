@@ -61,6 +61,7 @@
   <main><div class="stage" id="stage"></div></main>
   <footer>
     <span id="hint">둘 중 더 와닿는 주제를 선택 (← / →, 또는 클릭)</span>
+    <button id="fs">전체화면</button>
     <button id="reset">처음부터</button>
   </footer>
 
@@ -122,7 +123,20 @@
   function reset(){ st={pool:[0,1,2,3,4,5,6,7],next:[],i:0,champ:null,locked:false};
     hint.textContent="둘 중 더 와닿는 주제를 선택 (← / →, 또는 클릭)"; render(); }
   document.getElementById("reset").onclick=reset;
+  var fsBtn=document.getElementById("fs");
+  function isFs(){return document.fullscreenElement||document.webkitFullscreenElement;}
+  function toggleFs(){
+    try{
+      if(!isFs()){ var el=document.documentElement; (el.requestFullscreen||el.webkitRequestFullscreen||el.msRequestFullscreen).call(el); }
+      else { (document.exitFullscreen||document.webkitExitFullscreen||document.msExitFullscreen).call(document); }
+    }catch(e){}
+  }
+  fsBtn.onclick=toggleFs;
+  function syncFsLabel(){ fsBtn.textContent=isFs()?"전체화면 끄기":"전체화면"; }
+  document.addEventListener("fullscreenchange",syncFsLabel);
+  document.addEventListener("webkitfullscreenchange",syncFsLabel);
   document.addEventListener("keydown",function(e){
+    if(e.key==="f"||e.key==="F"){ toggleFs(); return; }
     if(st.champ!=null){ if(e.key==="Enter"||e.key===" ")reset(); return; }
     if(e.key==="ArrowLeft"||e.key==="1")pick("A");
     else if(e.key==="ArrowRight"||e.key==="2")pick("B");
